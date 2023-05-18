@@ -4,15 +4,13 @@
 $conn = mysqli_connect('localhost', 'root', '');
 $database = mysqli_select_db($conn, 'job-board');
 
-$encodedData = file_get_contents('php://input');  // take data from react native fetch API
-$decodedData = json_decode($encodedData, true);
-$job_name=$decodedData['name'];
-$employer_name =$decodedData['employer_name'];
-$employer_id =$decodedData['employer_id'];
-$description=$decodedData['description'];
-$salary=$decodedData['salary'];
-$location=$decodedData['location'];
-$requirements=$decodedData['requirements'];
+$job_name=$_POST['name'];
+$employer_name =$_POST['employer_name'];
+$employer_id;
+$description=$_POST['description'];
+$salary=$_POST['salary'];
+$location=$_POST['location'];
+$requirements=$_POST['requirements'];
 
 
 $SQLE = "select * from `users` where name = '$employer_name' ";
