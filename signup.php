@@ -2,12 +2,11 @@
 $CN = mysqli_connect("localhost", "root", "");
 $DB = mysqli_select_db($CN, "job-board");
 
-$EncodedData=file_get_contents('php://input');
-$DecodedData=json_decode($EncodedData, true);
 
-$name=$DecodedData['name'];
-$password=$DecodedData['password'];
-$email=$DecodedData['email'];
+
+$name=$_POST['name'];
+$password=$_POST['password'];
+$email=$_POST['email'];
 $SQL = "select * from users where email = '$email' ";
 $exeSQL = mysqli_query($CN, $SQL);
 $check = mysqli_num_rows($exeSQL);
