@@ -5,12 +5,12 @@ $db = mysqli_select_db($con, "job-board");
 $encodedData = file_get_contents('php://input');  
 $decodedData = json_decode($encodedData, true);
 
-$name =$decodedData['name'];
-$job_id=$decodedData['job_id'];
-$job_seeker_id=$decodedData['job_seeker_id'];
-$cover_letter=$decodedData['cover_letter'];
-$status=$decodedData['status'];
-$resume=$decodedData['resume'];
+$name =$_POST['name'];
+$job_id;
+$job_seeker_id=$_POST['job_seeker_id'];
+$cover_letter=$_POST['cover_letter'];
+$status=$_POST['status'];
+$resume=$_POST['resume'];
 $sql0 = "select id from `job-list` where name = '$name' ";
 $exe0 = mysqli_query($con, $sql0);
 $result = mysqli_fetch_assoc($exe0);
@@ -27,10 +27,10 @@ else {
 	$sql2 = "insert into `job-applications` (job_id, job_seeker_id, cover_letter, status, resume) values ($job_id, $job_seeker_id, '$cover_letter', '$status', '$resume')";
 	$exe2 = mysqli_query($con, $sql2);
 	if($exe2)
-		$Message = 'registered succefull';
+		$Message = 'registered successfully';
 	else
 {
-$Message="registered not succefully";
+$Message="registered not successfully";
 }
 }
 $Response[]=array("Message"=>$Message);
