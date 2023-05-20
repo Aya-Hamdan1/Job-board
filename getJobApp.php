@@ -2,10 +2,10 @@
 $con = mysqli_connect('localhost', 'root', '');
 $db = mysqli_select_db($con, 'job-board');
 
-$job_name = $_POST['name'];
+// $job_name = $_POST['name'];
+$job_id = $_POST['id'];
 
-
-$SQLC = "select * from `job-list` where name = '$job_name'";
+$SQLC = "select * from `job-list` where id = '$job_id'";
 $exe = mysqli_query($con, $SQLC);
 $row5=mysqli_fetch_assoc($exe);
 $jobId=$row5['id'];
@@ -38,7 +38,7 @@ $email = $row['email'];
 }
 }
 else{
-	$response1 = false;
+	$response1 = "There are no job applications";
 }
 $response=array($name,$description,$salary,$location,$requirements);
 echo json_encode($response);
