@@ -133,8 +133,18 @@ function getJop($input0){ //search by Key GET
     global $conn;
     $keyword = mysqli_real_escape_string($conn, $input0['key']);
     $info = mysqli_real_escape_string($conn,$input0['info']);
+    $email = mysqli_real_escape_string($conn,$input0['email']);
+
+    $SQL = "select * from users where email = '$email' ";
+    $exe = mysqli_query($conn, $SQL);
+    $res = mysqli_fetch_assoc($exe);
+    $seeker = $res['id'];
+
 
     if($keyword == 'salary'){
+       $sql = "insert into searches(`job_seeker_id`, `location`, `salary_range`, `name`) VALUES ($seeker,null,$info,null)";
+       $exe = mysqli_query($conn, $sql);
+
         $SQL = "select * from `job-list` where salary = $info ";
         $exe = mysqli_query($conn, $SQL);
         if($exe){
@@ -163,6 +173,9 @@ function getJop($input0){ //search by Key GET
         }
     }
     else if($keyword == 'location'){
+        $sql = "insert into searches(`job_seeker_id`, `location`, `salary_range`, `name`) VALUES ($seeker,'$info',null,null)";
+       $exe = mysqli_query($conn, $sql);
+
         $SQL = "select * from `job-list` where location = '$info' ";
         $exe = mysqli_query($conn, $SQL);
         if($exe){
@@ -192,7 +205,9 @@ function getJop($input0){ //search by Key GET
      
     
     }
-    else if($keyword == 'name'){
+    else if($keyword == 'title'){
+        $sql = "insert into searches(`job_seeker_id`, `location`, `salary_range`, `name`) VALUES ($seeker,null,null,'$info')";
+        $exe = mysqli_query($conn, $sql);
         $SQL = "select * from `job-list` where name = '$info' ";
         $exe = mysqli_query($conn, $SQL);
         if($exe){
@@ -319,40 +334,7 @@ function updateJob($input, $params){ //update job PUT
 }
 
 
-// function delete($params){ //delete Job
-//     global $conn;
 
-//     if(!isset($params['id'])){
-//         return error422(('Job id not found '));
-//     }
-//     elseif(empty(trim($params['id']))){
-//         return error422(('Enter job id'));
-//     }
-
-//     $job_id=mysqli_real_escape_string($conn, $params['id']);
-    
-//     $sql = "delete from `job-list` where id = '$job_id'";
-//     $result = mysqli_query($conn, $sql);
-
-//     if($result){
-
-//         $data = [
-//             'status' => 200,
-//             'message' => 'deleted Successfully',
-//         ];
-//         header("Http/1.0 200 deleted");
-//         echo json_encode($data);
-//     }
-//     else{
-//         $data = [
-//             'status' => 404,
-//             'message' => 'job not found',
-//         ];
-//         header("Http/1.0 404 not found");
-//         return json_encode($data);
-//     }
-
-// }
 function delete($params){ //delete Job
     global $conn;
 
