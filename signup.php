@@ -5,7 +5,7 @@ $DB = mysqli_select_db($CN, "job-board");
 
 
 $name=$_POST['name'];
-$password=$_POST['password'];
+$password = md5($_POST['password']);
 $email=$_POST['email'];
 $SQL = "select * from users where email = '$email' ";
 $exeSQL = mysqli_query($CN, $SQL);
@@ -23,11 +23,11 @@ $R=mysqli_query($CN,$IQ);
 
 if($R)
 {
-$Message="registered succefully";
+$Message="registered successfully";
 }
 else
 {
-$Message="registered not succefully";
+$Message="registered not successfully";
 }
 }
 $Response[]=array("Message"=>$Message);
