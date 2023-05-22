@@ -315,38 +315,45 @@ function updateJob($input, $params){ //update job PUT
 
 }
 
-function delete($params){ //delete Job
+function delete($params){ //delete application
     global $conn;
 
     if(!isset($params['id'])){
         return error422(('Job id not found '));
     }
+    elseif(!isset($params['email'])){
+        return error422(('employer_email not found '));
+    }
     elseif(empty(trim($params['id']))){
         return error422(('Enter job id'));
+    }
+    elseif(empty(trim($params['email']))){
+        return error422(('Enter Employer email'));
     }
 
 
     $job_id=mysqli_real_escape_string($conn, $params['id']);
+    $employer_email=mysqli_real_escape_string($conn, $params['email']);
 
-    $SQLU = "select * from `job-list` where id = $job_id ";
-    $exe = mysqli_query($conn, $SQLU);
-    $num =  mysqli_num_rows($exe);
-    if($num > 0){
-        
-    
-    $sql = "delete from `job-list` where id = $job_id";
-    $result = mysqli_query($conn, $sql);
+    $SQLE = "select * from users where email = '$employer_email' ";
+    $exeE = mysqli_query($conn, $SQLE);
+    $resE = mysqli_fetch_assoc($exeE);
+    $employee_id = $resE['id'];
 
-    if($result){
-
+    $SQL = "select * from `job-applications` where job_id = $job_id and job_seeker_id = $employee_id ";
+    $exe = mysqli_query($conn, $SQL);
+    $resE = mysqli_num_rows($exe);
+    if($resE > 0){
+    $SQL1 = "delete from `job-applications` where job_id = $job_id and job_seeker_id = $employee_id";
+    $R = mysqli_query($conn, $SQL1);
+    if ($R) {
         $data = [
-                'status' => 200,
-                 'message' => 'deleted Successfully',
-             ];
-            header("Http/1.0 200 deleted");
-             echo json_encode($data);
-    }
-    else{
+            'status' => 200,
+             'message' => 'deleted Successfully',
+         ];
+        header("Http/1.0 200 deleted");
+         echo json_encode($data);
+    } else {
         $data = [
             'status' => 200,
             'message' => 'Can not deleted',
@@ -355,14 +362,19 @@ function delete($params){ //delete Job
         return json_encode($data);
     }
 }
-else{
-        $data = [
-            'status' => 404,
-            'message' => 'This Job Not Found',
-        ];
-        header("Http/1.0 404 This Job Not Found");
-        echo json_encode($data);
+
+// } 
+else {
+    $data = [
+        'status' => 404,
+        'message' => 'This Application Not Found',
+    ];
+    header("Http/1.0 404 This Application Not Found");
+    echo json_encode($data);
+
 }
+    /****************** */
+   
 
 }
 ?>
