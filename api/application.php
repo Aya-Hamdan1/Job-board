@@ -138,54 +138,46 @@ function addApp($input){  //insert new app POST
 }
 
 
-function updateJob($input, $params){ //update job PUT
+function updateApp($input, $params){ //update App PUT
     global $conn;
    
+    // if(!isset($params['email'])){
+    //     return error422(('email not found '));
+    // }
+    // elseif(empty(trim($params['email']))){
+    //     return error422(('Enter your email '));
+    // }
     if(!isset($params['id'])){
-        return error422(('Job id not found '));
+        return error422(('Application id not found '));
     }
     elseif(empty(trim($params['id']))){
-        return error422(('Enter job id'));
+        return error422(('Enter Application id'));
     }
-    $job_id=mysqli_real_escape_string($conn, $params['id']);
+    
+    $App_id=mysqli_real_escape_string($conn, $params['id']);
 
-    $name =mysqli_real_escape_string($conn, $input['name']);
-    $employer_email = mysqli_real_escape_string($conn, $input['employer_email']);
-    $description=mysqli_real_escape_string($conn, $input['description']);
-    $salary=mysqli_real_escape_string($conn, $input['salary']);
-    $location=mysqli_real_escape_string($conn, $input['location']);
-    $requirements=mysqli_real_escape_string($conn, $input['requirements']);
+    $cover_letter =mysqli_real_escape_string($conn, $input['cover_letter']);
+    $status = mysqli_real_escape_string($conn, $input['status']);
+    $resume=mysqli_real_escape_string($conn, $input['resume']);
    
    
-   if(empty(trim($name))){
-    return error422('Enter Job Title!');
+   if(empty(trim($cover_letter))){
+    return error422('Enter yor cover_letter!');
    }
-   elseif(empty(trim($description))){
-    return error422('Enter Job description!');
+   elseif(empty(trim($status))){
+    return error422('Enter yor status!');
    }
-   elseif(empty(trim($salary))){
-    return error422('Enter Job salary!');
-   }
-   elseif(empty(trim($location))){
-    return error422('Enter Job Location!');
-   }
-   elseif(empty(trim($requirements))){
-    return error422('Enter Job requirements!');
+   elseif(empty(trim($resume))){
+    return error422('Enter yor resume!');
    }
    else{
-    $SQLU = "select * from `job-list` where id = '$job_id' ";
+    $SQLU = "select * from `job-applications` where id = '$App_id' ";
     $exe = mysqli_query($conn, $SQLU);
     $check =  mysqli_num_rows($exe);
     if($check > 0){
-    if(!empty(trim(($employer_email)))){
-        $sql0 = "select id from users where email = '$employer_email' ";
-        $exe0 = mysqli_query($conn, $sql0);
-        $result = mysqli_fetch_assoc($exe0);
-        $employer_id = $result['id'];
-        
-    //    }
     
-    $sql1 = "update `job-list` set name='$name' , employer_id=$employer_id,description='$description', salary=$salary, location='$location',`requirements`='$requirements' where id='$job_id'";
+    
+    $sql1 = "update `job-applications` set cover_letter='$cover_letter' , status='$status',resume='$resume' where id=$App_id";
     $R = mysqli_query($conn, $sql1);
     if($R)
     {
@@ -205,29 +197,7 @@ function updateJob($input, $params){ //update job PUT
         header("Http/1.0 500 Internal Server Error");
         echo json_encode($data);
     }
-    }
-    else{
-        $sql1 = "update `job-list` set name='$name' , employer_id=null,description='$description', salary=$salary, location='$location',`requirements`='$requirements' where id='$job_id'";
-    $R = mysqli_query($conn, $sql1);
-    if($R)
-    {
-        $data = [
-            'status' => 201,
-            'message' => 'Updated Successfully',
-        ];
-        header("Http/1.0 200 Success");
-        echo json_encode($data);
-    }
-    else
-    {
-        $data = [
-            'status' => 405,
-            'message' => 'Internal Server Error',
-        ];
-        header("Http/1.0 500 Internal Server Error");
-        echo json_encode($data);
-    }
-       }
+   
     }
    }
 
@@ -293,6 +263,59 @@ else {
 }
     /****************** */
    
+
+}
+
+function getMyApp($input0){ //get employer App
+    global $conn;
+    
+    if(!isset($input0['email'])){
+        return error422(('email not found '));
+    }
+    $email = mysqli_real_escape_string($conn, $input0['email']);
+    if(empty(trim($email))){
+        return error422('Enter your Email!');
+       }
+
+       $SQLC = "select * from users where email = '$email'";
+       $exe = mysqli_query($conn, $SQLC);
+       $res = mysqli_fetch_assoc($exe);
+       $id = $res['id'];
+       
+    /**************** */
+    $SQLC = "select * from `job-applications` where job_seeker_id = $id";
+    $app = mysqli_query($conn, $SQLC);
+    if($app){
+        if(mysqli_num_rows($app) > 0){
+            $res = mysqli_fetch_all($app, MYSQLI_ASSOC);
+
+            $data = [
+                'status' =>200,
+                'message' => 'Application List fetch successfully',
+                'data' => $res,
+            ];
+            header("Http/1.0 200 success");
+            return json_encode($data);
+
+        }else{
+            $data = [
+                'status' => 404,
+                'message' => 'No Job List',
+            ];
+            header("Http/1.0 404 No Job List");
+            return json_encode($data);
+        }
+
+
+    }
+    else{
+        $data = [
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header("Http/1.0 500 Internal Server Error");
+        return json_encode($data);
+    }
 
 }
 ?>
