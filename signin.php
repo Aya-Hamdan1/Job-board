@@ -6,7 +6,7 @@ $database = mysqli_select_db($conn, 'job-board');
 
 
 $email = $_POST['email'];
-$password= $_POST['password']; 
+$password= md5($_POST['password']); 
 
 $SQL = "select * from users where email = '$email' and password = '$password'";
 $exeSQL = mysqli_query($conn, $SQL);
