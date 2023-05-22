@@ -1,19 +1,28 @@
 <?php
 
 require 'db.php';
-function getList(){ //get all job GET
-
+function getList($input0){ //get application GET parameters
+ 
     global $conn;
-    $sql = "select * from `job-list`";
-    $exe = mysqli_query($conn, $sql);
-
-    if($exe){
-        if(mysqli_num_rows($exe) > 0){
-            $res = mysqli_fetch_all($exe, MYSQLI_ASSOC);
+    
+    if(!isset($input0['id'])){
+        return error422(('Job id not found '));
+    }
+    $job_id = mysqli_real_escape_string($conn, $input0['id']);
+    if(empty(trim($job_id))){
+        return error422('Enter Job Id!');
+       }
+       
+    /**************** */
+    $SQLC = "select * from `job-applications` where job_id = $job_id";
+    $app = mysqli_query($conn, $SQLC);
+    if($app){
+        if(mysqli_num_rows($app) > 0){
+            $res = mysqli_fetch_all($app, MYSQLI_ASSOC);
 
             $data = [
                 'status' =>200,
-                'message' => 'Job List fetch successfully',
+                'message' => 'Application List fetch successfully',
                 'data' => $res,
             ];
             header("Http/1.0 200 success");
@@ -38,6 +47,8 @@ function getList(){ //get all job GET
         header("Http/1.0 500 Internal Server Error");
         return json_encode($data);
     }
+
+   
 }
 
 function error422($message){
@@ -126,99 +137,6 @@ function addApp($input){  //insert new app POST
 
 }
 
-function getJop($input0){ //search by Key GET
-    global $conn;
-    $keyword = mysqli_real_escape_string($conn, $input0['key']);
-    $info = mysqli_real_escape_string($conn,$input0['info']);
-
-    if($keyword == 'salary'){
-        $SQL = "select * from `job-list` where salary = $info ";
-        $exe = mysqli_query($conn, $SQL);
-        if($exe){
-            if(mysqli_num_rows($exe) > 0){
-                $res = mysqli_fetch_all($exe, MYSQLI_ASSOC);
-    
-                $data = [
-                    'status' =>200,
-                    'message' => 'Job List fetch successfully',
-                    'data' => $res,
-                ];
-                header("Http/1.0 200 success");
-                return json_encode($data);
-
-
-            }
-        else{
-            $data = [
-                'status' => 404,
-                'message' => 'No Job with this salary',
-            ];
-            header("Http/1.0 404 No Job with this salary");
-            return json_encode($data);
-           
-        }
-        }
-    }
-    else if($keyword == 'location'){
-        $SQL = "select * from `job-list` where location = '$info' ";
-        $exe = mysqli_query($conn, $SQL);
-        if($exe){
-            if(mysqli_num_rows($exe) > 0){
-                $res = mysqli_fetch_all($exe, MYSQLI_ASSOC);
-    
-                $data = [
-                    'status' =>200,
-                    'message' => 'Job List fetch successfully',
-                    'data' => $res,
-                ];
-                header("Http/1.0 200 success");
-                return json_encode($data);
-
-
-            }
-        else{
-            $data = [
-                'status' => 404,
-                'message' => 'No Job with this Location',
-            ];
-            header("Http/1.0 404 No Job with this Location");
-            return json_encode($data);
-           
-        }
-        }
-     
-    
-    }
-    else if($keyword == 'name'){
-        $SQL = "select * from `job-list` where name = '$info' ";
-        $exe = mysqli_query($conn, $SQL);
-        if($exe){
-            if(mysqli_num_rows($exe) > 0){
-                $res = mysqli_fetch_all($exe, MYSQLI_ASSOC);
-    
-                $data = [
-                    'status' =>200,
-                    'message' => 'Job List fetch successfully',
-                    'data' => $res,
-                ];
-                header("Http/1.0 200 success");
-                return json_encode($data);
-
-
-            }
-        else{
-            $data = [
-                'status' => 404,
-                'message' => 'No Job with this name',
-            ];
-            header("Http/1.0 404 No Job with this name");
-            return json_encode($data);
-           
-        }
-        }
-    
-    }
-}
 
 function updateJob($input, $params){ //update job PUT
     global $conn;
